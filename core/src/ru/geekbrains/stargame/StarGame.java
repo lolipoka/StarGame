@@ -11,7 +11,7 @@ public class StarGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
 	Texture background;
-	
+
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
