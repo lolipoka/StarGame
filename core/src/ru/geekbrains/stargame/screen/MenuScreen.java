@@ -1,84 +1,106 @@
 package ru.geekbrains.stargame.screen;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.stargame.base.BaseScreen;
+import ru.geekbrains.stargame.math.Rect;
+import ru.geekbrains.stargame.sprite.Background;
+import ru.geekbrains.stargame.sprite.ButtonExit;
+import ru.geekbrains.stargame.sprite.ButtonPlay;
+import ru.geekbrains.stargame.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
-    private Texture img;
-    private Texture background;
-    private Vector2 currentPosition;
-    private Vector2 newPosition;
-    private Vector2 direction;
+
+    private static final int STAR_COUNT = 256;
+
+    private Texture bg;
+    private Background background;
+
+    private TextureAtlas atlas;
+    private Star[] stars;
+
+    private ButtonExit buttonExit;
+    private ButtonPlay buttonPlay;
+
+    private final Game game;
+
+    public MenuScreen(Game game) {
+        this.game = game;
+    }
 
     @Override
     public void show() {
         super.show();
-        img = new Texture("badlogic.jpg");
-        background = new Texture("background.png");
-        currentPosition = new Vector2();
-        newPosition = new Vector2();
-        direction = new Vector2();
+        bg = new Texture("textures/bg.png");
+        background = new Background(bg);
+        atlas = new TextureAtlas("textures/menuAtlas.tpack");
+        stars = new Star[STAR_COUNT];
+        for (int i = 0; i < STAR_COUNT; i++) {
+            stars[i] = new Star(atlas);
+        }
+        buttonExit = new ButtonExit(atlas);
+        buttonPlay = new ButtonPlay(atlas, game);
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        batch.begin();
-
-        drawBackground();
-
-        /* Не знаю, как по-другому добиться того, чтобы координаты векторов совпадали.
-           currentPosition.equals(newPosition) не работает.
-           Просто сравнение координат x и y тоже не работает.
-           Приведение x и y к int и сравнение тоже не работает.
-        */
-        boolean isInNewPosition = (Math.round(currentPosition.x) == Math.round(newPosition.x))
-                && (Math.round(currentPosition.y) == Math.round(newPosition.y));
-        if (!isInNewPosition) {
-            currentPosition.add(direction);
-        }
-        drawLogo();
-
-        batch.end();
-    }
-
-    private void drawBackground() {
-        Color bgColor = batch.getColor();
-        batch.setColor(bgColor.r, bgColor.g, bgColor.b, 1f);
-        batch.draw(background, 0, 0);
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        newPosition.set(screenX, Gdx.graphics.getHeight() - screenY);
-
-        direction.set(newPosition);
-        direction.sub(currentPosition);
-        direction.scl(0.01f); // Чем больше разница, тем больше вектор (выше скорость).
-
-        return false;
-    }
-
-    private void drawLogo() {
-        Color imgColor = batch.getColor();
-        batch.setColor(imgColor.r, imgColor.g, imgColor.b, 0.2f);
-        batch.draw(img, currentPosition.x, currentPosition.y);
+        update(delta);
+        draw();
     }
 
     @Override
     public void dispose() {
-        batch.dispose();
-        img.dispose();
-        background.dispose();
+        bg.dispose();
+        atlas.dispose();
         super.dispose();
+    }
+
+    @Override
+    public void resize(Rect worldBounds) {
+        background.resize(worldBounds);
+        for (Star star : stars) {
+            star.resize(worldBounds);
+        }
+        buttonExit.resize(worldBounds);
+        buttonPlay.resize(worldBounds);
+    }
+
+    @Override
+    public boolean touchDown(Vector2 touch, int pointer, int button) {
+        buttonExit.touchDown(touch, pointer, button);
+        buttonPlay.touchDown(touch, pointer, button);
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(Vector2 touch, int pointer, int button) {
+        buttonExit.touchUp(touch, pointer, button);
+        buttonPlay.touchUp(touch, pointer, button);
+        return false;
+    }
+
+    private void update(float delta) {
+        for (Star star : stars) {
+            star.update(delta);
+        }
+    }
+
+    private void draw() {
+        Gdx.gl.glClearColor(0.55f, 0.23f, 0.9f, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        batch.begin();
+        background.draw(batch);
+        for (Star star : stars) {
+            star.draw(batch);
+        }
+        buttonExit.draw(batch);
+        buttonPlay.draw(batch);
+        batch.end();
     }
 }
