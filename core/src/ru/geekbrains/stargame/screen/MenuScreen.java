@@ -103,4 +103,9 @@ public class MenuScreen extends BaseScreen {
         buttonPlay.draw(batch);
         batch.end();
     }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
 }

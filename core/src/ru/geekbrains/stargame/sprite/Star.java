@@ -11,9 +11,11 @@ public class Star extends Sprite {
 
     private static final float MIN_HEIGHT = 0.005f;
     private static final float MAX_HEIGHT = 0.011f;
+    private static final float BLINK = 0.00005f;
 
     private final Vector2 v;
     private Rect worldBounds;
+    private boolean toMax;
 
     public Star(TextureAtlas atlas) {
         super(atlas.findRegion("star"));
@@ -42,23 +44,23 @@ public class Star extends Sprite {
 
     private void changeHeight() {
 
-        /*float height;
+        float height;
         if (toMax) {
-            height = getHeight() + 0.00001f;
+            height = getHeight() + BLINK;
             if (height > MAX_HEIGHT) {
                 toMax = false;
             }
         } else {
-            height = getHeight() - 0.00001f;
+            height = getHeight() - BLINK;
             if (height < MIN_HEIGHT) {
                 toMax = true;
             }
-        }*/
+        }
 
-        float height = getHeight() + 0.00001f;
+/*        float height = getHeight() + 0.00001f;
         if (height > MAX_HEIGHT) {
             height = MIN_HEIGHT;
-        }
+        }*/
         setHeightProportion(height);
     }
 }
