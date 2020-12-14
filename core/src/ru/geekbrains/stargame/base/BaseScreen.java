@@ -144,11 +144,6 @@ public abstract class BaseScreen implements Screen, InputProcessor {
     }
 
     @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
     public boolean scrolled(float amountX, float amountY) {
         System.out.println("scrolled amount X = " + amountX + "; Y = " + amountY);
         return false;
