@@ -1,6 +1,5 @@
 package ru.geekbrains.stargame.screen;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -10,41 +9,34 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.base.BaseScreen;
 import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.sprite.Background;
-import ru.geekbrains.stargame.sprite.ButtonExit;
-import ru.geekbrains.stargame.sprite.ButtonPlay;
 import ru.geekbrains.stargame.sprite.Star;
+import ru.geekbrains.stargame.sprite.StarShip;
 
-public class MenuScreen extends BaseScreen {
+public class GameScreen extends BaseScreen {
 
-    private static final int STAR_COUNT = 256;
+    private static final int STAR_COUNT = 128;
 
     private Texture bg;
     private Background background;
 
     private TextureAtlas atlas;
     private Star[] stars;
-
-    private ButtonExit buttonExit;
-    private ButtonPlay buttonPlay;
-
-    private final Game game;
-
-    public MenuScreen(Game game) {
-        this.game = game;
-    }
+    private StarShip starShip;
 
     @Override
     public void show() {
         super.show();
         bg = new Texture("textures/bg.png");
         background = new Background(bg);
-        atlas = new TextureAtlas("textures/menuAtlas.tpack");
+
+        atlas = new TextureAtlas("textures/mainAtlas.tpack");
+
         stars = new Star[STAR_COUNT];
         for (int i = 0; i < STAR_COUNT; i++) {
             stars[i] = new Star(atlas);
         }
-        buttonExit = new ButtonExit(atlas);
-        buttonPlay = new ButtonPlay(atlas, game);
+
+        starShip = new StarShip(atlas);
     }
 
     @Override
@@ -55,6 +47,16 @@ public class MenuScreen extends BaseScreen {
     }
 
     @Override
+    public void resize(Rect worldBounds) {
+        super.resize(worldBounds);
+        background.resize(worldBounds);
+        for (Star star : stars) {
+            star.resize(worldBounds);
+        }
+        starShip.resize(worldBounds);
+    }
+
+    @Override
     public void dispose() {
         bg.dispose();
         atlas.dispose();
@@ -62,33 +64,31 @@ public class MenuScreen extends BaseScreen {
     }
 
     @Override
-    public void resize(Rect worldBounds) {
-        background.resize(worldBounds);
-        for (Star star : stars) {
-            star.resize(worldBounds);
-        }
-        buttonExit.resize(worldBounds);
-        buttonPlay.resize(worldBounds);
+    public boolean keyDown(int keycode) {
+        return super.keyDown(keycode);
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return super.keyUp(keycode);
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        buttonExit.touchDown(touch, pointer, button);
-        buttonPlay.touchDown(touch, pointer, button);
-        return false;
+        starShip.touchDown(touch, pointer, button);
+        return super.touchDown(touch, pointer, button);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        buttonExit.touchUp(touch, pointer, button);
-        buttonPlay.touchUp(touch, pointer, button);
-        return false;
+        return super.touchUp(touch, pointer, button);
     }
 
     private void update(float delta) {
         for (Star star : stars) {
             star.update(delta);
         }
+        starShip.update(delta);
     }
 
     private void draw() {
@@ -99,8 +99,7 @@ public class MenuScreen extends BaseScreen {
         for (Star star : stars) {
             star.draw(batch);
         }
-        buttonExit.draw(batch);
-        buttonPlay.draw(batch);
+        starShip.draw(batch);
         batch.end();
     }
 }
