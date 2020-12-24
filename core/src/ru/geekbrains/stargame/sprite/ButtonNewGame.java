@@ -2,19 +2,20 @@ package ru.geekbrains.stargame.sprite;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+
 import ru.geekbrains.stargame.base.BaseButton;
 import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.screen.GameScreen;
 
-public class ButtonPlay extends BaseButton {
+public class ButtonNewGame extends BaseButton {
 
-    private static final float HEIGHT = 0.24f;
-    private static final float MARGIN = 0.03f;
+    public static final float HEIGHT = 0.05f;
+    public static final float TOP = -0.1f;
 
     private final Game game;
 
-    public ButtonPlay(TextureAtlas atlas, Game game) {
-        super(atlas.findRegion("btPlay"));
+    public ButtonNewGame(TextureAtlas atlas, Game game) {
+        super(atlas.findRegion("button_new_game"));
         this.game = game;
     }
 
@@ -22,8 +23,7 @@ public class ButtonPlay extends BaseButton {
     public void resize(Rect worldBounds) {
         super.resize(worldBounds);
         setHeightProportion(HEIGHT);
-        setBottom(worldBounds.getBottom() + MARGIN);
-        setLeft(worldBounds.getLeft() + MARGIN);
+        setTop(TOP);
     }
 
     @Override

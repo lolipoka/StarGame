@@ -7,45 +7,32 @@ import com.badlogic.gdx.math.Vector2;
 import ru.geekbrains.stargame.base.Ship;
 import ru.geekbrains.stargame.math.Rect;
 import ru.geekbrains.stargame.pool.BulletPool;
+import ru.geekbrains.stargame.pool.ExplosionPool;
 
 public class Enemy extends Ship {
 
-    private boolean shotOnArrival = false;
-    private boolean warped = false;
-    private final Vector2 warpSpeed = new Vector2();
+    private Vector2 startV;
 
-    public Enemy(BulletPool bulletPool, Rect worldBounds) {
-        super(bulletPool);
+    public Enemy(BulletPool bulletPool, ExplosionPool explosionPool, Rect worldBounds) {
+        super(bulletPool, explosionPool);
         this.worldBounds = worldBounds;
         this.v = new Vector2();
         this.v0 = new Vector2();
         this.bulletPos = new Vector2();
+        startV = new Vector2(0, -0.3f);
     }
 
     @Override
     public void update(float delta) {
         super.update(delta);
-        warpSpeed.set(0, - delta * 0.5f);
-        warp();
-        shootOnArrival();
+        if (getTop() < worldBounds.getTop()) {
+            this.v.set(v0);
+        } else {
+            reloadTimer = reloadInterval - delta * 2;
+        }
         bulletPos.set(pos.x, pos.y - getHalfHeight());
         if (getBottom() < worldBounds.getBottom()) {
             destroy();
-        }
-    }
-
-    private void warp() {
-        if (getTop() > worldBounds.getTop()) {
-            pos.add(warpSpeed);
-        } else  {
-            if (!warped) warped = true;
-        }
-    }
-
-    private void shootOnArrival() {
-        if (warped && !shotOnArrival) {
-            shoot();
-            shotOnArrival = true;
         }
     }
 
@@ -69,7 +56,15 @@ public class Enemy extends Ship {
         this.damage = damage;
         this.hp = hp;
         this.reloadInterval = reloadInterval;
-        this.v.set(v0);
+        this.v0.set(v0);
+        this.v.set(startV);
         setHeightProportion(height);
+    }
+
+    public boolean isBulletCollision(Bullet bullet) {
+        return !(bullet.getRight() < getLeft()
+        || bullet.getLeft() > getRight()
+        || bullet.getBottom() > getTop()
+        || bullet.getTop() < pos.y);
     }
 }
