@@ -11,11 +11,9 @@ public class Star extends Sprite {
 
     private static final float MIN_HEIGHT = 0.005f;
     private static final float MAX_HEIGHT = 0.011f;
-    private static final float BLINK = 0.00005f;
 
-    private final Vector2 v;
+    protected final Vector2 v;
     private Rect worldBounds;
-    private boolean toMax;
 
     public Star(TextureAtlas atlas) {
         super(atlas.findRegion("star"));
@@ -36,31 +34,35 @@ public class Star extends Sprite {
     @Override
     public void update(float delta) {
         pos.mulAdd(v, delta);
-        if (getRight() < worldBounds.getLeft()) setLeft(worldBounds.getRight());
-        if (getLeft() > worldBounds.getRight()) setRight(worldBounds.getLeft());
-        if (getTop() < worldBounds.getBottom()) setBottom(worldBounds.getTop());
+        checkBounds();
         changeHeight();
     }
 
-    private void changeHeight() {
+    protected void checkBounds() {
+        if (getRight() < worldBounds.getLeft()) setLeft(worldBounds.getRight());
+        if (getLeft() > worldBounds.getRight()) setRight(worldBounds.getLeft());
+        if (getTop() < worldBounds.getBottom()) setBottom(worldBounds.getTop());
+    }
 
-        float height;
+    protected void changeHeight() {
+
+        /*float height;
         if (toMax) {
-            height = getHeight() + BLINK;
+            height = getHeight() + 0.00001f;
             if (height > MAX_HEIGHT) {
                 toMax = false;
             }
         } else {
-            height = getHeight() - BLINK;
+            height = getHeight() - 0.00001f;
             if (height < MIN_HEIGHT) {
                 toMax = true;
             }
-        }
+        }*/
 
-/*        float height = getHeight() + 0.00001f;
+        float height = getHeight() + 0.00001f;
         if (height > MAX_HEIGHT) {
             height = MIN_HEIGHT;
-        }*/
+        }
         setHeightProportion(height);
     }
 }

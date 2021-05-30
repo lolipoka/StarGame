@@ -105,7 +105,7 @@ public class MenuScreen extends BaseScreen {
     }
 
     @Override
-    public boolean mouseMoved(int screenX, int screenY) {
+    public boolean scrolled(float amountX, float amountY) {
         return false;
     }
 }
